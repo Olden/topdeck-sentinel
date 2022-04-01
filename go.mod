@@ -1,4 +1,4 @@
-module github.com/olden/topdeck
+module github.com/olden/topdeck-sentinel
 
 go 1.18
 

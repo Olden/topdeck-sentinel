@@ -8,7 +8,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 
-	"github.com/olden/topdeck/pkg/config"
+	"github.com/olden/topdeck-sentinel/pkg/config"
 	"github.com/pkg/errors"
 )
 

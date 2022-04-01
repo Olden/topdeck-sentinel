@@ -1,87 +1,34 @@
 package main
 
 import (
-	"context"
-	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 
-	"github.com/olden/topdeck/internal/sentinel"
-	"github.com/olden/topdeck/pkg/config"
-	"github.com/olden/topdeck/pkg/database"
-	"github.com/pkg/errors"
-	"gorm.io/gorm/clause"
-
-	scryfall "github.com/BlueMonday/go-scryfall"
-)
-
-const (
-	BulkType = "default_cards"
+	"github.com/olden/topdeck-sentinel/internal/sentinel"
+	"github.com/olden/topdeck-sentinel/pkg/config"
 )
 
 func main() {
-	ctx := context.Background()
-	client, err := scryfall.NewClient()
+	cs, err := NewCardScrapper()
+	if err != nil {
+		fmt.Printf("%+v", err)
+	}
+	cards, err := cs.getCards(DefaultCards)
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}
 
-	result, err := client.ListBulkData(ctx)
-	if err != nil {
-		fmt.Printf("%+v", err)
-	}
-
-	var url string
-	for _, item := range result {
-		if item.Type == BulkType {
-			url = item.DownloadURI
-		}
-	}
-
-	resp, err := downloadFile(url)
-	if err != nil {
-		fmt.Printf("%+v", err)
-	}
-
-	var cards []sentinel.Card
-	err = json.Unmarshal(resp, &cards)
-	if err != nil {
-		fmt.Printf("%+v", err)
-	}
-
-	err = storeCards(cards)
-	if err != nil {
-		fmt.Printf("%+v", err)
-	}
-}
-
-func storeCards(col []sentinel.Card) error {
 	c, err := config.NewConfig()
 	if err != nil {
-		return errors.Wrap(err, "can't instantiate config")
+		fmt.Printf("%+v", err)
 	}
 
-	db, err := database.NewMysql(c.Mysql)
+	cr, err := sentinel.NewCardRepo(c.Mysql)
 	if err != nil {
-		return errors.Wrap(err, "can't instantiate gorm")
+		fmt.Printf("%+v", err)
 	}
 
-	db.Clauses(clause.Insert{Modifier: "IGNORE"}).CreateInBatches(col, 5000)
-
-	return nil
-}
-
-func downloadFile(url string) ([]byte, error) {
-	resp, err := http.Get(url)
+	cr.StoreCards(cards)
 	if err != nil {
-		return nil, err
+		fmt.Printf("%+v", err)
 	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("bad status: %s", resp.Status)
-	}
-
-	return io.ReadAll(resp.Body)
 }

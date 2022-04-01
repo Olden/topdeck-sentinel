@@ -3,9 +3,9 @@ package main
 import (
 	"fmt"
 
-	"github.com/olden/topdeck/internal/sentinel"
-	"github.com/olden/topdeck/pkg/config"
-	"github.com/olden/topdeck/pkg/database"
+	"github.com/olden/topdeck-sentinel/internal/sentinel"
+	"github.com/olden/topdeck-sentinel/pkg/config"
+	"github.com/olden/topdeck-sentinel/pkg/database"
 )
 
 func main() {
