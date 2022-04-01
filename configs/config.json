@@ -1,0 +1,13 @@
+{
+    "mysql": {
+      "host": "127.0.0.1",
+      "port": 3306,
+      "user": "sentinel",
+      "passwd": "pass",
+      "db": "sentinel",
+      "maxOpenConns": 20,
+      "maxIdleConns": 20,
+      "connMaxLifetimeMinutes": 5,
+      "loc": "Europe/Minsk"
+    }
+}
