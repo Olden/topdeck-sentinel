@@ -16,3 +16,5 @@ clear:
 build: clear
 	go build -o $(ARTIFACTS)/cards_scrapper ./cmd/cards_scrapper
 	go build -o $(ARTIFACTS)/migrations ./cmd/migrations
+	go build -o $(ARTIFACTS)/topdeck_auctions ./cmd/topdeck_auctions
+	go build -o $(ARTIFACTS)/scryfall ./cmd/scryfall

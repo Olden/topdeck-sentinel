@@ -19,7 +19,7 @@ func main() {
 		fmt.Printf("%+v", err)
 	}
 
-	err = db.AutoMigrate(&sentinel.Card{})
+	err = db.Set("gorm:table_options", "ENGINE=InnoDB").Migrator().AutoMigrate(&sentinel.Card{}, &sentinel.Lot{})
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}

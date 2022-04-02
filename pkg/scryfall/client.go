@@ -1,4 +1,4 @@
-package main
+package scryfall
 
 import (
 	"context"
@@ -16,25 +16,56 @@ const (
 	DefaultCards = "default_cards"
 )
 
-type CardScrapper struct {
-	scryfall *scryfall.Client
+var (
+	ErrCardNotFound = errors.New("card not found")
+)
+
+type ScryfallClient struct {
+	scryfall.Client
 }
 
-func NewCardScrapper() (*CardScrapper, error) {
+func NewScryfallClient() (*ScryfallClient, error) {
 	client, err := scryfall.NewClient()
 	if err != nil {
 		return nil, errors.Wrap(err, "can't instantiate scryfall client")
 	}
 
-	return &CardScrapper{
-		scryfall: client,
+	return &ScryfallClient{
+		Client: *client,
 	}, nil
 }
 
-func (cs *CardScrapper) getCards(t string) ([]sentinel.Card, error) {
+func (sc *ScryfallClient) GetDefaultCards() ([]sentinel.Card, error) {
+	return sc.getCards(DefaultCards)
+}
+
+func (sc *ScryfallClient) FindCardByName(n string) (sentinel.Card, error) {
 	ctx := context.Background()
 
-	result, err := cs.scryfall.ListBulkData(ctx)
+	sco := scryfall.SearchCardsOptions{
+		IncludeMultilingual: true,
+	}
+	result, err := sc.SearchCards(ctx, n, sco)
+	if err != nil {
+		return sentinel.Card{}, errors.Wrap(err, "can't search card at scryfall")
+	}
+	if result.TotalCards == 1 {
+		return sentinel.Card{
+			ID:          result.Cards[0].ID,
+			OracleID:    result.Cards[0].OracleID,
+			Name:        result.Cards[0].Name,
+			Set:         result.Cards[0].Set,
+			ScryfallURI: result.Cards[0].ScryfallURI,
+		}, nil
+	}
+
+	return sentinel.Card{}, ErrCardNotFound
+}
+
+func (sc *ScryfallClient) getCards(t string) ([]sentinel.Card, error) {
+	ctx := context.Background()
+
+	result, err := sc.ListBulkData(ctx)
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}

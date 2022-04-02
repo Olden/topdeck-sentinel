@@ -5,14 +5,13 @@ import (
 	"github.com/olden/topdeck-sentinel/pkg/database"
 	"github.com/pkg/errors"
 	"gorm.io/gorm"
-	"gorm.io/gorm/clause"
 )
 
-type CardRepo struct {
+type LotRepo struct {
 	mysql *gorm.DB
 }
 
-func NewCardRepo(c *config.MysqlConfig) (*CardRepo, error) {
+func NewLotsRepo(c *config.MysqlConfig) (*CardRepo, error) {
 	db, err := database.NewMysql(c)
 	if err != nil {
 		return nil, errors.Wrap(err, "can't instantiate gorm")
@@ -23,8 +22,10 @@ func NewCardRepo(c *config.MysqlConfig) (*CardRepo, error) {
 	}, nil
 }
 
-func (cr *CardRepo) StoreCards(col []Card) error {
-	cr.mysql.Clauses(clause.Insert{Modifier: "IGNORE"}).CreateInBatches(col, 5000)
+func (cr *CardRepo) StoreLots(col []Lot) error {
+	for _, l := range col {
+		_ = cr.mysql.FirstOrCreate(&l, Lot{ID: l.ID})
+	}
 
 	return nil
 }

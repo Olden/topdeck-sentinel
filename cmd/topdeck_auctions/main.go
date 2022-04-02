@@ -1,21 +1,30 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
 
 	"github.com/olden/topdeck-sentinel/internal/sentinel"
 	"github.com/olden/topdeck-sentinel/pkg/config"
-	"github.com/olden/topdeck-sentinel/pkg/scryfall"
 )
 
 func main() {
-	sc, err := scryfall.NewScryfallClient()
+	resp, err := http.Get(TDApiUri)
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}
-	cards, err := sc.GetDefaultCards()
+	defer resp.Body.Close()
+
+	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
 		fmt.Printf("%+v", err)
+	}
+
+	var lots []sentinel.Lot
+	if err := json.Unmarshal(body, &lots); err != nil {
+		fmt.Println("Can not unmarshal JSON")
 	}
 
 	c, err := config.NewConfig()
@@ -23,12 +32,11 @@ func main() {
 		fmt.Printf("%+v", err)
 	}
 
-	cr, err := sentinel.NewCardsRepo(c.Mysql)
+	lr, err := sentinel.NewLotsRepo(c.Mysql)
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}
-
-	err = cr.StoreCards(cards)
+	err = lr.StoreLots(lots)
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}
