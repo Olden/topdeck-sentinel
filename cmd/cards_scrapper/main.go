@@ -13,7 +13,7 @@ func main() {
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}
-	cards, err := sc.GetDefaultCards()
+	cards, err := sc.GetAllCards()
 	if err != nil {
 		fmt.Printf("%+v", err)
 	}

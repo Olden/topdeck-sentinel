@@ -22,8 +22,13 @@ func NewLotsRepo(c *config.MysqlConfig) (*CardRepo, error) {
 	}, nil
 }
 
-func (cr *CardRepo) StoreLots(col []Lot) error {
+func (cr *CardRepo) StoreLots(col []Lot, st *StopWord) error {
 	for _, l := range col {
+		l.NormalizeLot(st)
+		recognizedCard, err := cr.FindByName(l.LotNormalized)
+		if err == nil {
+			l.OracleID = recognizedCard.OracleID
+		}
 		_ = cr.mysql.FirstOrCreate(&l, Lot{ID: l.ID})
 	}
 

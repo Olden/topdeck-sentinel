@@ -14,6 +14,7 @@ import (
 
 const (
 	DefaultCards = "default_cards"
+	AllCards     = "all_cards"
 )
 
 var (
@@ -37,6 +38,10 @@ func NewScryfallClient() (*ScryfallClient, error) {
 
 func (sc *ScryfallClient) GetDefaultCards() ([]sentinel.Card, error) {
 	return sc.getCards(DefaultCards)
+}
+
+func (sc *ScryfallClient) GetAllCards() ([]sentinel.Card, error) {
+	return sc.getCards(AllCards)
 }
 
 func (sc *ScryfallClient) FindCardByName(n string) (sentinel.Card, error) {

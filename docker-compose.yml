@@ -1,10 +1,10 @@
 version: "3"
 services:
-  topdeck-mysql:
+  mysql:
     image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password --innodb_ft_min_token_size=2
     restart: always
     environment:
-      - MONGO_DATA_DIR=/data/db
       - MYSQL_DATABASE=sentinel
       - MYSQL_USER=sentinel
       - MYSQL_PASSWORD=pass

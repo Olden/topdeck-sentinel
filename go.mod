@@ -5,10 +5,10 @@ go 1.18
 require (
 	github.com/BlueMonday/go-scryfall v0.3.0
 	github.com/davecgh/go-spew v1.1.1
-	github.com/google/uuid v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/spf13/pflag v1.0.5
 	github.com/spf13/viper v1.10.1
+	golang.org/x/text v0.3.7
 	gorm.io/driver/mysql v1.3.2
 	gorm.io/gorm v1.23.3
 )
@@ -29,8 +29,7 @@ require (
 	github.com/spf13/jwalterweatherman v1.1.0 // indirect
 	github.com/subosito/gotenv v1.2.0 // indirect
 	go.uber.org/ratelimit v0.2.0 // indirect
-	golang.org/x/sys v0.0.0-20211210111614-af8b64212486 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/sys v0.0.0-20220330033206-e17cdc41300f // indirect
 	gopkg.in/ini.v1 v1.66.2 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )

@@ -9,7 +9,8 @@ import (
 )
 
 type Config struct {
-	Mysql *MysqlConfig
+	Mysql     *MysqlConfig
+	StopWords []string
 }
 
 type MysqlConfig struct {
@@ -32,13 +33,18 @@ func NewConfig() (*Config, error) {
 	viper.SetConfigName("config")
 	viper.SetConfigType("json")
 	viper.ReadInConfig()
+	if err := viper.ReadInConfig(); err != nil {
+		return nil, errors.Wrap(err, "can't read config file")
+	}
+
+	viper.SetConfigName("stopwords")
+	viper.SetConfigType("yml")
+	if err := viper.MergeInConfig(); err != nil {
+		return nil, errors.Wrap(err, "can't merge stopwords config file")
+	}
 
 	if err := viper.BindPFlags(pflag.CommandLine); err != nil {
 		return nil, errors.Wrap(err, "viper: can't bind pflags")
-	}
-
-	if err := viper.ReadInConfig(); err != nil {
-		return nil, errors.Wrap(err, "can't read config file")
 	}
 
 	return &Config{
@@ -53,5 +59,6 @@ func NewConfig() (*Config, error) {
 			ConnMaxLifetime: viper.GetInt("mysql.connMaxLifetimeMinutes"),
 			Loc:             viper.GetString("mysql.loc"),
 		},
+		StopWords: viper.GetStringSlice("stopwords"),
 	}, nil
 }
