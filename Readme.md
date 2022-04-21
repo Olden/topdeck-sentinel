@@ -1,1 +1,1 @@
-SELECT *, match(name,printed_name) AGAINST ('+Commandeer' in boolean mode) as score FROM `sentinel`.`cards` where match(name,printed_name) AGAINST ('+Commandeer' in boolean mode);
+
