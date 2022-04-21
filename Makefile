@@ -1,4 +1,3 @@
-PACKAGE=github.com/olden/topdeck-sentinel-sentinel
 ARTIFACTS=./build
 
 .PHONY: vendor
